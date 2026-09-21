@@ -1,0 +1,39 @@
+# Environment and Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Databases and Local Storage
+*.db
+*.sqlite3
+kahna_sessions.db
+logs/
+*.log
+
+# Desktop / Tauri / Node
+desktop/node_modules/
+desktop/src-tauri/target/
+desktop/dist/
+desktop/.vscode/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
