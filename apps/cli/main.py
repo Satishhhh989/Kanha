@@ -51,7 +51,8 @@ def desktop():
         # Run npm run tauri dev
         frontend_process = subprocess.Popen(
             ["npm", "run", "tauri", "dev"],
-            cwd=desktop_dir
+            cwd=desktop_dir,
+            shell=(sys.platform == "win32")
         )
         frontend_process.wait()
     except KeyboardInterrupt:

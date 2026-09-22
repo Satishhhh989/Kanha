@@ -1,6 +1,7 @@
-from typing import Protocol, List, Optional, Dict
+from typing import Protocol, List, Optional, Dict, runtime_checkable
 from .models import Point, ScreenFrame, ComputerState
 
+@runtime_checkable
 class ApplicationController(Protocol):
     async def list_applications(self) -> List[str]: ...
     async def open_application(self, name: str) -> None: ...
@@ -62,6 +63,7 @@ class BrowserController(Protocol):
 class ComputerObserver(Protocol):
     async def get_state(self) -> ComputerState: ...
 
+@runtime_checkable
 class ComputerController(Protocol):
     """The central root for all computer intelligence capabilities."""
     @property
