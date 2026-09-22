@@ -47,6 +47,14 @@ def desktop():
     # Start the Tauri dev server (assuming dev environment)
     desktop_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "desktop")
     
+    import shutil
+    if not shutil.which("npm"):
+        console.print("[bold red]'npm' was not found on your system.[/bold red]")
+        console.print("[yellow]To use the Graphical Desktop App, install Node.js using:[/yellow] [bold cyan]winget install OpenJS.NodeJS.LTS[/bold cyan]")
+        console.print("[green]Or run KAHNA directly in terminal mode without npm:[/green] [bold cyan]python -m apps.cli.main chat[/bold cyan]")
+        backend_process.terminate()
+        return
+
     try:
         # Run npm run tauri dev
         frontend_process = subprocess.Popen(
