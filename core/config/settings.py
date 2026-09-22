@@ -1,5 +1,9 @@
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
+from pydantic import Field, ValidationError
+
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+ENV_PATH = ROOT_DIR / ".env"
 
 class KahnaSettings(BaseSettings):
     """
@@ -27,15 +31,25 @@ class KahnaSettings(BaseSettings):
     kahna_device_secret: str = Field(default="unsafe-default-secret", alias="KAHNA_DEVICE_SECRET")
     
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(str(ENV_PATH), ".env"),
         env_file_encoding="utf-8",
         extra="ignore"
     )
 
 def load_settings() -> KahnaSettings:
     """Loads and validates the configuration from environment variables or .env file."""
-    # This will raise validation errors if required fields (like OPENROUTER_API_KEY) are missing.
-    return KahnaSettings()
+    try:
+        return KahnaSettings()
+    except ValidationError:
+        import os
+        import logging
+        logging.getLogger("core.config").warning(
+            "OPENROUTER_API_KEY not found in environment or .env. Using default placeholder."
+        )
+        return KahnaSettings(
+            _env_file=None,
+            OPENROUTER_API_KEY=os.environ.get("OPENROUTER_API_KEY", "your_openrouter_api_key_here")
+        )
 
 # Global settings instance, loaded eagerly
 settings = load_settings()
