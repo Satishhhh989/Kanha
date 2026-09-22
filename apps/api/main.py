@@ -35,13 +35,19 @@ async def startup_event():
     services = os.environ.get("KAHNA_SERVICES", "api,telegram").split(",")
     
     if "voice" in services:
-        from core.voice.factory import voice_manager
-        logger.info("Starting Voice Manager service")
-        asyncio.create_task(voice_manager.start())
+        try:
+            from core.voice.factory import voice_manager
+            logger.info("Starting Voice Manager service")
+            asyncio.create_task(voice_manager.start())
+        except Exception as e:
+            logger.warning("Voice service failed to start", error=str(e))
         
     if "telegram" in services:
-        logger.info("Starting Telegram Adapter service")
-        asyncio.create_task(telegram_adapter.start())
+        try:
+            logger.info("Starting Telegram Adapter service")
+            asyncio.create_task(telegram_adapter.start())
+        except Exception as e:
+            logger.warning("Telegram service failed to start", error=str(e))
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -50,11 +56,17 @@ async def shutdown_event():
     services = os.environ.get("KAHNA_SERVICES", "api,telegram").split(",")
     
     if "voice" in services:
-        from core.voice.factory import voice_manager
-        await voice_manager.stop()
+        try:
+            from core.voice.factory import voice_manager
+            await voice_manager.stop()
+        except Exception:
+            pass
         
     if "telegram" in services:
-        await telegram_adapter.stop()
+        try:
+            await telegram_adapter.stop()
+        except Exception:
+            pass
 
 @app.exception_handler(KahnaError)
 async def kahna_exception_handler(request: Request, exc: KahnaError):
