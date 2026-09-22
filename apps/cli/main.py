@@ -55,10 +55,23 @@ def desktop():
         backend_process.terminate()
         return
 
+    has_cargo = bool(shutil.which("cargo"))
+    frontend_cmd = ["npm", "run", "tauri", "dev"] if has_cargo else ["npm", "run", "dev"]
+    
+    if not has_cargo:
+        console.print("[cyan]Rust toolchain ('cargo') not found — launching KAHNA web interface with Vite...[/cyan]")
+        import webbrowser
+        import threading
+        import time
+        def open_browser():
+            time.sleep(2)
+            webbrowser.open("http://localhost:5173")
+        threading.Thread(target=open_browser, daemon=True).start()
+
     try:
-        # Run npm run tauri dev
+        # Run frontend process (Tauri or Vite)
         frontend_process = subprocess.Popen(
-            ["npm", "run", "tauri", "dev"],
+            frontend_cmd,
             cwd=desktop_dir,
             shell=(sys.platform == "win32")
         )
